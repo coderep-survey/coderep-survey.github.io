@@ -34,6 +34,13 @@ plugins:
   - jekyll-remote-theme
 paginate: 5  # amount of posts to show per page
 paginate_path: /page:num/
+include:
+  - _pages
+
+baseurl: "/docs"
+navigation:
+  - title: "Papers by Tags"
+    url: "/tags/"
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
