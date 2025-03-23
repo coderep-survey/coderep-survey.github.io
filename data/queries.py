@@ -127,42 +127,41 @@ def extract_bibfile(bib_database, master_list):
                 
                 master_list[name]['author'] = author
                 master_list[name]
+    #had to manually input these since the names were slightly different in the database thanthe bibtext file
+    master_list['VulRepair: A T5-Based Automated Software Vulnerability Repair']['author'] = 'Fu, M. and Tantithamthavorn, C. and Le, T. and Nguyen, V. and Phung, D.'
+    master_list['GraphEye: A Novel Solution for Detecting Vulnerable Functions Based on Graph Attention Network [C]']['author'] = 'Zhou, L. and Huang, M. and Li, Y. and Nie, Y. and Li, J. and Liu, Y.'
+    master_list['Using complexity coupling and cohesion metrics as early indicators of vulnerabilities']['author'] = 'I. Chowdhury and M. Zulkernine'
+    master_list['$\mu$μVulDeePecker: A Deep Learning-Based System for Multiclass Vulnerability Detection']['author'] = 'Zou, D. and Wang, S. and Xu, S. and Li, Z. and Jin, H.'
+    master_list['VulDeePecker: A deep learning-based system for multiclass vulnerability detection']['author'] = 'Zou, D. and Wang, S. and Xu, S. and Li, Z. and Jin, H.'
 
+    #seems to be an extra corrupted name in the file so i delete it
+    del master_list['$\mu$μVulDeePecker: A Deep Learning-Based System for Multiclass Vulnerability Detection']
+    #Malware Classification Based on Graph Convolutional Neural Networks and Static Call Graph Features
         #publisher
         #author
 
 
 
 #extracts data from the main sql database
-master_list = extract_data()
+if __name__ == '__main__':
+    master_list = extract_data()
 
-#extracts data from the bibtext - author
-filename = 'slr.bib'
-bib_database = parse(filename)
-extract_bibfile(bib_database, master_list)
-
-#had to manually input these since the names were slightly different in the database thanthe bibtext file
-master_list['VulRepair: A T5-Based Automated Software Vulnerability Repair']['author'] = 'Fu, M. and Tantithamthavorn, C. and Le, T. and Nguyen, V. and Phung, D.'
-master_list['GraphEye: A Novel Solution for Detecting Vulnerable Functions Based on Graph Attention Network [C]']['author'] = 'Zhou, L. and Huang, M. and Li, Y. and Nie, Y. and Li, J. and Liu, Y.'
-master_list['Using complexity coupling and cohesion metrics as early indicators of vulnerabilities']['author'] = 'I. Chowdhury and M. Zulkernine'
-master_list['$\mu$μVulDeePecker: A Deep Learning-Based System for Multiclass Vulnerability Detection']['author'] = 'Zou, D. and Wang, S. and Xu, S. and Li, Z. and Jin, H.'
-master_list['VulDeePecker: A deep learning-based system for multiclass vulnerability detection']['author'] = 'Zou, D. and Wang, S. and Xu, S. and Li, Z. and Jin, H.'
-
-#seems to be an extra name in the 
-del master_list['$\mu$μVulDeePecker: A Deep Learning-Based System for Multiclass Vulnerability Detection']
-#Malware Classification Based on Graph Convolutional Neural Networks and Static Call Graph Features
+    #extracts data from the bibtext - author
+    filename = 'slr.bib'
+    bib_database = parse(filename)
+    extract_bibfile(bib_database, master_list)
 
 
-#checking if everything is right:
-count = 0
-unauthored_articles = []
-for num, i in enumerate(master_list):
-    print(f'{num}: {master_list[i]["author"]}')
-    if master_list[i]["author"] == []:
-        unauthored_articles.append(i)
+    #checking if everything is right:
+    count = 0
+    unauthored_articles = []
+    for num, i in enumerate(master_list):
+        print(f'{num}: {master_list[i]["author"]}')
+        if master_list[i]["author"] == []:
+            unauthored_articles.append(i)
 
 
-print(len(unauthored_articles))
+    print(len(unauthored_articles))
 
 
 
