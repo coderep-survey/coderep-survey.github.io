@@ -1,7 +1,14 @@
 import sqlite3
 from collections import defaultdict
+import bibtexparser
+from bibtexparser.bparser import BibTexParser
+import os
+import re
 # Connect to the SQLite database
 
+
+def normalize_text(text):
+    return ' '.join(text.split())
 def extract_data():
     conn = sqlite3.connect('db_survey_representations.sqlite3')
 
@@ -98,9 +105,66 @@ def extract_data():
     print(len(master_list))
     return master_list 
 
-def extract_bibfile(master_list):
-    pass
+def parse(filename):
+    # Parse the uploaded .bib file
+    parser = BibTexParser()
+    parser.ignore_nonstandard_types = False  # <--- This is the key line
+    with open(filename, 'r', encoding='utf-8') as bib_file:
+        return bibtexparser.load(bib_file,parser=parser)
+    
+def extract_bibfile(bib_database, master_list):
+    #each entry is a dictionary
+    count = 0
+ 
+    #gets every 
+    for entry in bib_database.entries:
+        count += 1
+        title = normalize_text(entry['title'])
+        for name in master_list:
+            name = normalize_text(name)
+            if title.lower() == name.lower():
+                author = entry['author']
+                
+                master_list[name]['author'] = author
+                master_list[name]
 
+        #publisher
+        #author
+
+
+
+#extracts data from the main sql database
 master_list = extract_data()
-extract_bibfile(master_list)
+
+#extracts data from the bibtext - author
+filename = 'slr.bib'
+bib_database = parse(filename)
+extract_bibfile(bib_database, master_list)
+
+#had to manually input these since the names were slightly different in the database thanthe bibtext file
+master_list['VulRepair: A T5-Based Automated Software Vulnerability Repair']['author'] = 'Fu, M. and Tantithamthavorn, C. and Le, T. and Nguyen, V. and Phung, D.'
+master_list['GraphEye: A Novel Solution for Detecting Vulnerable Functions Based on Graph Attention Network [C]']['author'] = 'Zhou, L. and Huang, M. and Li, Y. and Nie, Y. and Li, J. and Liu, Y.'
+master_list['Using complexity coupling and cohesion metrics as early indicators of vulnerabilities']['author'] = 'I. Chowdhury and M. Zulkernine'
+master_list['$\mu$μVulDeePecker: A Deep Learning-Based System for Multiclass Vulnerability Detection']['author'] = 'Zou, D. and Wang, S. and Xu, S. and Li, Z. and Jin, H.'
+master_list['VulDeePecker: A deep learning-based system for multiclass vulnerability detection']['author'] = 'Zou, D. and Wang, S. and Xu, S. and Li, Z. and Jin, H.'
+
+#seems to be an extra name in the 
+del master_list['$\mu$μVulDeePecker: A Deep Learning-Based System for Multiclass Vulnerability Detection']
+#Malware Classification Based on Graph Convolutional Neural Networks and Static Call Graph Features
+
+
+#checking if everything is right:
+count = 0
+unauthored_articles = []
+for num, i in enumerate(master_list):
+    print(f'{num}: {master_list[i]["author"]}')
+    if master_list[i]["author"] == []:
+        unauthored_articles.append(i)
+
+
+print(len(unauthored_articles))
+
+
+
+
 
