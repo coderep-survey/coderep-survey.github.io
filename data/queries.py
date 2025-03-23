@@ -93,7 +93,14 @@ def extract_data():
         representation = list(row)[16]
         master_list[name]["representation"].append(representation)
         #print(f"{name}, {representation}")
-    print(master_list["Malware Classification Based on Graph Convolutional Neural Networks and Static Call Graph Features"])
+    #print(master_list["Malware Classification Based on Graph Convolutional Neural Networks and Static Call Graph Features"])
     conn.close()
-extract_data()
+    print(len(master_list))
+    return master_list 
+
+def extract_bibfile(master_list):
+    pass
+
+master_list = extract_data()
+extract_bibfile(master_list)
 
