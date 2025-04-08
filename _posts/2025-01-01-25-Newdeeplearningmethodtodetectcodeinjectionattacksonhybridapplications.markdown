@@ -12,4 +12,4 @@ Author: R. Yan and X. Xiao and G. Hu and S. Peng and Y. Jiang
 
 
  Tags:  
-        <span>{% for tag in page.tags %}<a href="{{ site.baseurl }}tags/#{{ tag | slugify }}">{{ tag }}</a>{% if forloop.last == false %}, {% endif %}{% endfor %}</span>
+        <span>{% for tag in page.tags %}<a href="/tags/#{{ tag | slugify }}">{{ tag }}</a>{% if forloop.last == false %}, {% endif %}{% endfor %}</span>

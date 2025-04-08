@@ -23,6 +23,12 @@ def delete_all(): # for when you make so many mistakes with the naming
 
 # #for article in master_list:
 delete_all()
+
+languages_all = set()
+tasks_all = set()
+models_all = set()
+representations_all = set()
+
 for title, info in master_list.items():
    
     file_path = "../_posts/" 
@@ -50,19 +56,23 @@ for title, info in master_list.items():
             for val in languages:
                 if val != 'not specified':
                     tags.append(val.replace(" (final)", "")) # removes the final from each value
+                    languages_all.add(val)
         if tasks:
             for val in tasks:
                 if val != 'not specified':
                     tags.append(val.replace(" (final)", ""))
+                    tasks_all.add(val)
         if models:
             for val in models:
                 if val != 'not specified':
                     tags.append(val.replace(" (final)", ""))
+                    models_all.add(val)
 
         if representations:
             for val in representations:
                 if val != 'not specified':
                     tags.append(val.replace(" (final)", ""))
+                    representations_all.add(val)
 
 
         
@@ -78,5 +88,5 @@ for title, info in master_list.items():
         f.write('')
         f.write('')
         f.write(""" Tags:  
-        <span>{% for tag in page.tags %}<a href="{{ site.baseurl }}tags/#{{ tag | slugify }}">{{ tag }}</a>{% if forloop.last == false %}, {% endif %}{% endfor %}</span>\n""")
+        <span>{% for tag in page.tags %}<a href="/tags/#{{ tag | slugify }}">{{ tag }}</a>{% if forloop.last == false %}, {% endif %}{% endfor %}</span>\n""")
 
