@@ -1,6 +1,7 @@
 import queries #all the functions i just made to get the info
 import os
 import datetime
+import re
 #get master_list
 master_list = queries.extract_data()
 bib_database = queries.parse('slr.bib')
@@ -8,19 +9,24 @@ queries.extract_bibfile(bib_database, master_list)
 
 def delete_all(): # for when you make so many mistakes with the naming
     file_path = "../_posts/"
-    for title, info in master_list.items():
-        if os.path.exists(f"{file_path}2025-04-01-25-{title}.markdown"):
-            os.remove(f"{file_path}2025-04-01-25-{title}.markdown")
+    pattern = re.compile(r"2025-04-01-25-.*\.markdown")
+
+    for filename in os.listdir(file_path):
+        if pattern.fullmatch(filename):
+            full_path = os.path.join(file_path, filename)
+            os.remove(full_path)
+            print(f"Deleted: {full_path}")
+
         
 #iteratre though every name in master_list
 
 
 # #for article in master_list:
-
+delete_all()
 for title, info in master_list.items():
    
     file_path = "../_posts/" 
-    with open(f"{file_path}2025-04-01-25-{title.replace(' ', '')}.markdown", 'w') as f:
+    with open(f"{file_path}2025-01-01-25-{title.replace(' ', '')}.markdown", 'w') as f:
 
         f.write("---\n")
         #layout
@@ -29,7 +35,7 @@ for title, info in master_list.items():
         #_, values = master_list.items()
         f.write("layout: post\n")
         f.write(f"title : '{title.strip()}'\n")
-        f.write("date: 2025-04-01 10:03:19 -0500\n")
+        f.write("date: 2025-01-01 10:03:19 -0500\n")
         
         #for loop to get all of the tags.
         tags = []
@@ -43,20 +49,20 @@ for title, info in master_list.items():
         if languages:
             for val in languages:
                 if val != 'not specified':
-                    tags.append(val)
+                    tags.append(val.replace(" (final)", "")) # removes the final from each value
         if tasks:
             for val in tasks:
                 if val != 'not specified':
-                    tags.append(val)
+                    tags.append(val.replace(" (final)", ""))
         if models:
             for val in models:
                 if val != 'not specified':
-                    tags.append(val)
+                    tags.append(val.replace(" (final)", ""))
 
         if representations:
             for val in representations:
                 if val != 'not specified':
-                    tags.append(val)
+                    tags.append(val.replace(" (final)", ""))
 
 
         
@@ -71,10 +77,6 @@ for title, info in master_list.items():
         f.write('\n\n\n')
         f.write('')
         f.write('')
-        f.write(""" Tags: 
-    <span>
-    {% for tag in page.tags %}<a href="{{ site.baseurl }}tags/#{{ tag | slugify }}">{{ tag }}</a>{% if forloop.last == false %}, {% endif %}{% endfor %}
-    </span>\n""")
-
-# with open(f"../_posts/2025-03-24-25-test.markdown", 'w') as f:
+        f.write(""" Tags:  
+        <span>{% for tag in page.tags %}<a href="{{ site.baseurl }}tags/#{{ tag | slugify }}">{{ tag }}</a>{% if forloop.last == false %}, {% endif %}{% endfor %}</span>\n""")
 
