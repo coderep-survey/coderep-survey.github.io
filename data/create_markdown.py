@@ -9,7 +9,7 @@ queries.extract_bibfile(bib_database, master_list)
 
 def delete_all(): # for when you make so many mistakes with the naming
     file_path = "../_posts/"
-    pattern = re.compile(r"2025-04-01-25-.*\.markdown")
+    pattern = re.compile(r".*-01-01-25-.*\.markdown")
 
     for filename in os.listdir(file_path):
         if pattern.fullmatch(filename):
@@ -22,7 +22,7 @@ def delete_all(): # for when you make so many mistakes with the naming
 
 
 # #for article in master_list:
-delete_all()
+
 
 languages_all = set()
 tasks_all = set()
@@ -30,9 +30,21 @@ models_all = set()
 representations_all = set()
 
 for title, info in master_list.items():
-   
+#     """" all of the ones with invalid years 
+#     VulRepair: A T5-Based Automated Software Vulnerability Repair
+#      GraphEye: A Novel Solution for Detecting Vulnerable Functions Based on Graph Attention Network [C]
+    # Using complexity coupling and cohesion metrics as early indicators of vulnerabilities
+    # VulDeePecker: A deep learning-based system for multiclass vulnerability detection
+#     """
+    
+    year = info['year']
+    if year == []:
+        print(title)
+        year = 2025
+
+
     file_path = "../_posts/" 
-    with open(f"{file_path}2025-01-01-25-{title.replace(' ', '')}.markdown", 'w') as f:
+    with open(f"{file_path}{year}-01-01-25-{title.replace(' ', '')}.markdown", 'w') as f:
 
         f.write("---\n")
         #layout
@@ -41,7 +53,7 @@ for title, info in master_list.items():
         #_, values = master_list.items()
         f.write("layout: post\n")
         f.write(f"title : '{title.strip()}'\n")
-        f.write("date: 2025-01-01 10:03:19 -0500\n")
+        f.write(f"date: {year}-01-01 10:03:19 -0500\n")
         
         #for loop to get all of the tags.
         tags = []

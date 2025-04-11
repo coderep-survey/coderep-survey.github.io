@@ -6,7 +6,33 @@ import os
 import re
 # Connect to the SQLite database
 
+import re
 
+def latex_to_unicode(text):
+    latex_replacements = {
+        r"{\\'a}": "á", r"{\\'e}": "é", r"{\\'i}": "í", r"{\\'o}": "ó", r"{\\'u}": "ú",
+        r"{\\`a}": "à", r"{\\`e}": "è", r"{\\`i}": "ì", r"{\\`o}": "ò", r"{\\`u}": "ù",
+        r'{\\"a}': "ä", r'{\\"o}': "ö", r'{\\"u}': "ü",
+        r'{\\H{o}}': "ő", r'{\\H{u}}': "ű",
+        r"{\\'O}": "Ó", r"{\\H{O}}": "Ő",
+        r"{\\'U}": "Ú", r"{\\H{U}}": "Ű",
+        r"{\\c{c}}": "ç",
+        r"{\\~n}": "ñ",
+        r"\\textmu": "μ",
+        r"\$\\mu\$": "μ",
+        r"\$\\mu\$μ": "μ",  # handle special case in your manual patch
+        r"{\{\\'n\}}": "ń",  # Doma{'{n}}ska
+        r"{'\{n\}}": "ń",    # catch weird versions
+        r"{'\{n}}": "ń",     # alternate malformed
+            # existing mappings...
+        r"{\\'n}": "ń",
+        r"{\\'{n}}": "ń",  # optional catch
+        r"{\\'{n}}": "ń",  # extra safety for nested ones
+    }
+    
+    for latex, uni in latex_replacements.items():
+        text = re.sub(latex, uni, text)
+    return text
 def normalize_text(text):
     return ' '.join(text.split())
 def extract_data():
@@ -123,10 +149,12 @@ def extract_bibfile(bib_database, master_list):
         for name in master_list:
             name = normalize_text(name)
             if title.lower() == name.lower():
-                author = entry['author']
-                
+                author = latex_to_unicode(entry['author'])
+                print(author)
+                year = entry['year']
                 master_list[name]['author'] = author
-                master_list[name]
+                master_list[name]['year'] = year
+                
     #had to manually input these since the names were slightly different in the database thanthe bibtext file
     master_list['VulRepair: A T5-Based Automated Software Vulnerability Repair']['author'] = 'Fu, M. and Tantithamthavorn, C. and Le, T. and Nguyen, V. and Phung, D.'
     master_list['GraphEye: A Novel Solution for Detecting Vulnerable Functions Based on Graph Attention Network [C]']['author'] = 'Zhou, L. and Huang, M. and Li, Y. and Nie, Y. and Li, J. and Liu, Y.'
@@ -156,12 +184,16 @@ if __name__ == '__main__':
     count = 0
     unauthored_articles = []
     for num, i in enumerate(master_list):
-        print(f'{num}: {master_list[i]["author"]}')
-        if master_list[i]["author"] == []:
-            unauthored_articles.append(i)
+        # print(f'{num}: {master_list[i]["year"]}') 
+        # print(f'{num}: {master_list[i]["author"]}')
+        print(type(master_list[i]["year"]))
+        # if master_list[i]["author"] == []:
+        #     unauthored_articles.append(i)
 
 
     print(len(unauthored_articles))
+
+
 
 
 
