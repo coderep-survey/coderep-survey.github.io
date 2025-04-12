@@ -36,11 +36,14 @@ paginate: 5  # amount of posts to show per page
 paginate_path: /page:num/
 include:
   - _pages
+  - _posts
 
 baseurl: "/"
 navigation:
   - title: "Papers by Tags"
     url: "/tags/"
+  - title: "Papers by Language"
+    url: "/language-tags"
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to

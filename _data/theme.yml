@@ -51,3 +51,7 @@ google_fonts:
 navigation_pages:
   - about.markdown
   - tags.markdown
+  - language_tags.markdown
+  - representation_tags.markdown
+  - models_tags.markdown
+  - tasks_tags.markdown

@@ -23,7 +23,7 @@ def delete_all(): # for when you make so many mistakes with the naming
 
 # #for article in master_list:
 
-
+#delete_all()
 languages_all = set()
 tasks_all = set()
 models_all = set()
@@ -42,9 +42,9 @@ for title, info in master_list.items():
         print(title)
         year = 2025
 
-
+    safe_title = re.sub(r'[^\w\-]', '', title.replace(' ', ''))
     file_path = "../_posts/" 
-    with open(f"{file_path}{year}-01-01-25-{title.replace(' ', '')}.markdown", 'w') as f:
+    with open(f"{file_path}{year}-01-01-25-{safe_title}.markdown", 'w') as f:
 
         f.write("---\n")
         #layout
@@ -101,4 +101,9 @@ for title, info in master_list.items():
         f.write('')
         f.write(""" Tags:  
         <span>{% for tag in page.tags %}<a href="/tags/#{{ tag | slugify }}">{{ tag }}</a>{% if forloop.last == false %}, {% endif %}{% endfor %}</span>\n""")
+
+print(f"{languages_all}\n")
+print(f"{tasks_all}\n") 
+print(f"{models_all}\n") 
+print(f"{representations_all}\n") 
 

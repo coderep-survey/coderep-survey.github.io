@@ -150,7 +150,7 @@ def extract_bibfile(bib_database, master_list):
             name = normalize_text(name)
             if title.lower() == name.lower():
                 author = latex_to_unicode(entry['author'])
-                print(author)
+               # print(author)
                 year = entry['year']
                 master_list[name]['author'] = author
                 master_list[name]['year'] = year
