@@ -2,30 +2,39 @@
 layout: default
 ---
 
-{% include page-intro.html %}
-
 <main id="main" class="page-content" aria-label="Content">
   <div class="index inner">
-    <div>{{ content }}</div>
+    <div class="custom-entry">
+      <header class="section-title">
+        <h2>A Survey of Source Code Representations for Machine Learning-Based Cybersecurity Tasks</h2>
+      </header>
     
-    {% if site.posts.size > 0 %}
-      <div>
-        <header class="section-title">
-          <h2>{{ site.data.theme.t.posts | default: 'Posts' }}{% if paginator.page > 1 %}{{ site.data.theme.t.page | default: 'Page' | prepend: ' - ' | append: ' ' }}{{ paginator.page }} {{ site.data.theme.t.of | default: 'of' }} {{ paginator.total_pages }}{% endif %}</h2>
-        </header>
-        <div class="entries-{{ page.entries_layout | default: 'list' }}">
-          {% if site.plugins contains 'jekyll-paginate' and page.paginate or site.gems contains 'jekyll-paginate' and page.paginate %}
-            {% comment %}
-              Add paginator.posts loop if jekyll-paginate plugin is enabled
-              and page.paginate == true
-            {% endcomment %}
-            {% include posts-paginated.html %}
-          {% else %}
-            {% include posts-all.html %}
-          {% endif %}
-        </div>
-      </div>    
-    {% endif %}
+      <p><strong>Beatrice Casey, Joanna C. S. Santos, George Perry</strong></p>
     
-  </div>
+      <p>
+        Machine learning techniques for cybersecurity-related software engineering tasks are becoming increasingly popular.
+        The representation of source code is a key portion of the technique that can impact the way the model is able to
+        learn the features of the source code. With an increasing number of these techniques being developed, it is
+        valuable to see the current state of the field to better understand what exists and what is not there yet.
+      </p>
+    
+      <p>
+        This article presents a study of these existing machine learning based approaches and demonstrates what type of
+        representations were used for different cybersecurity tasks and programming languages. Additionally, we study what
+        types of models are used with different representations.
+      </p>
+    
+      <p>
+        We have found that graph-based representations are the most popular category of representation, and tokenizers and
+        Abstract Syntax Trees (ASTs) are the two most popular representations overall. (e.g., AST and tokenizers are the representations with the highest count of papers, whereas graph-based representations is the category with the highest count of papers).
+         We also found that the most popular
+        cybersecurity task is vulnerability detection, and the language that is covered by the most techniques is C.
+        Finally, sequence-based models are the most popular category of models, and Support Vector Machines are the most
+        popular model overall.
+      </p>
+    
+      <p><a href="https://arxiv.org/abs/2403.10646" class="more-link">Link to Paper →</a></p>
+    </div>
+    
+    
 </main>
