@@ -3,11 +3,95 @@ from collections import defaultdict
 import bibtexparser
 from bibtexparser.bparser import BibTexParser
 import os
-import re
+import re 
+from pybtex.database.input import bibtex as pb
+import requests
+import time
 # Connect to the SQLite database
 
 import re
 
+# function from prof santos
+
+def doi_to_bibtex(doi: str) -> str:
+    """
+    Fetches the BibTeX entry for a given DOI using an online service.
+    """
+    url = f"https://doi.org/{doi}"
+    headers = {'Accept': 'application/x-bibtex'}
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.text
+    except requests.exceptions.RequestException as e:
+        return f"An error occurred when retrieving BibTeX: {e}"
+def doi_to_abstract(doi: str) -> str:
+    """
+    Attempts to retrieve an abstract using the CrossRef API and falls back to 
+    BibTeX parsing if necessary.  Cleans up common HTML/XML tags from abstracts.
+    """
+    if not doi:
+        return "No DOI provided."
+
+    # --- Try CrossRef API First ---
+    api_url = f"https://api.crossref.org/works/{doi}"
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+    try:
+        response = requests.get(api_url, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+
+        abstract = data.get('message', {}).get('abstract')
+        if abstract:
+            print(abstract)
+            return ' '.join(abstract.split()).strip()
+        else:
+                # Optionally, parse the BibTeX to extract the abstract (simple string search)
+                bibtex = doi_to_bibtex(doi)
+                abstract_start = bibtex.find("abstract = {")
+                if abstract_start != -1:
+                    abstract_start += len("abstract = {")
+                    abstract_end = bibtex.find("}", abstract_start)
+                    abstract = bibtex[abstract_start:abstract_end]
+                    print(abstract)
+                    return abstract
+                print("no abstract for this doi")
+                return "No abstract available for this DOI."
+    except requests.exceptions.RequestException as e:
+        print("no abstract")
+        return f"An error occurred when retrieving abstract: {e}"
+        
+
+
+def get_abstracts(master_list, bib_database):
+    """
+    Iterates through bib_database, finds matching titles in master_list,
+    fetches abstracts using DOI, and adds the abstract directly to the master_list entry.
+    """
+
+    for entry in bib_database.entries:
+        if 'title' not in entry:
+            continue
+
+        bib_title_normalized = ' '.join(entry['title'].split()).lower()
+        doi = entry.get('doi')
+
+        for name in list(master_list.keys()):
+            master_name_normalized = ' '.join(name.split()).lower()
+
+            if bib_title_normalized == master_name_normalized:
+                if doi:
+                    abstract = doi_to_abstract(doi)
+                    master_list[name]['abstract'] = abstract
+                    
+                else:
+                    master_list[name]['abstract'] = "No DOI found in BibTeX."
+                break
+
+    # Handle entries without abstracts after processing
+    for name, data in master_list.items():
+        if 'abstract' not in data:
+            master_list[name]['abstract'] = "Title not matched in BibTeX."
 def latex_to_unicode(text):
     latex_replacements = {
         r"{\\'a}": "á", r"{\\'e}": "é", r"{\\'i}": "í", r"{\\'o}": "ó", r"{\\'u}": "ú",
@@ -159,11 +243,11 @@ def extract_bibfile(bib_database, master_list):
     master_list['VulRepair: A T5-Based Automated Software Vulnerability Repair']['author'] = 'Fu, M. and Tantithamthavorn, C. and Le, T. and Nguyen, V. and Phung, D.'
     master_list['GraphEye: A Novel Solution for Detecting Vulnerable Functions Based on Graph Attention Network [C]']['author'] = 'Zhou, L. and Huang, M. and Li, Y. and Nie, Y. and Li, J. and Liu, Y.'
     master_list['Using complexity coupling and cohesion metrics as early indicators of vulnerabilities']['author'] = 'I. Chowdhury and M. Zulkernine'
-    master_list['$\mu$μVulDeePecker: A Deep Learning-Based System for Multiclass Vulnerability Detection']['author'] = 'Zou, D. and Wang, S. and Xu, S. and Li, Z. and Jin, H.'
+    master_list[r'$\mu$μVulDeePecker: A Deep Learning-Based System for Multiclass Vulnerability Detection']['author'] = 'Zou, D. and Wang, S. and Xu, S. and Li, Z. and Jin, H.'
     master_list['VulDeePecker: A deep learning-based system for multiclass vulnerability detection']['author'] = 'Zou, D. and Wang, S. and Xu, S. and Li, Z. and Jin, H.'
 
     #seems to be an extra corrupted name in the file so i delete it
-    del master_list['$\mu$μVulDeePecker: A Deep Learning-Based System for Multiclass Vulnerability Detection']
+    del master_list[r'$\mu$μVulDeePecker: A Deep Learning-Based System for Multiclass Vulnerability Detection']
     #Malware Classification Based on Graph Convolutional Neural Networks and Static Call Graph Features
         #publisher
         #author
@@ -178,20 +262,25 @@ if __name__ == '__main__':
     filename = 'slr.bib'
     bib_database = parse(filename)
     extract_bibfile(bib_database, master_list)
-
+    get_abstracts(master_list, bib_database)
 
     #checking if everything is right:
     count = 0
     unauthored_articles = []
-    for num, i in enumerate(master_list):
-        # print(f'{num}: {master_list[i]["year"]}') 
-        # print(f'{num}: {master_list[i]["author"]}')
-        print(type(master_list[i]["year"]))
-        # if master_list[i]["author"] == []:
-        #     unauthored_articles.append(i)
+    # for num, i in enumerate(master_list):
+    #     # print(f'{num}: {master_list[i]["year"]}') 
+    #     # print(f'{num}: {master_list[i]["author"]}')
+    #     print(type(master_list[i]["year"]))
+    #     # if master_list[i]["author"] == []:
+    #     #     unauthored_articles.append(i)
 
-
-    print(len(unauthored_articles))
+    for title, data in master_list.items():
+        # Safely get the abstract, providing a default message if the key is missing
+        abstract = data.get('abstract', 'Abstract not found or key missing.')
+        print(f"\nTitle: {title}")
+        print(f"Abstract: {abstract}")
+    print("\n--- End of Abstracts ---")
+   # print(len(unauthored_articles))
 
 
 
